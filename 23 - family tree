@@ -1,31 +1,33 @@
-parent(john, amy).
-parent(john, bob).
-parent(amy, chris).
-parent(bob, diana).
-parent(bob, eric).
+% Prolog program to represent a family tree
+
+% Facts defining family relationships
+parent(john, mary).
+parent(john, david).
+parent(susan, mary).
+parent(susan, david).
+parent(mary, linda).
+parent(mary, tom).
+parent(david, james).
+parent(david, alice).
+
 male(john).
-male(bob).
-male(chris).
-male(eric).
-female(amy).
-female(diana).
-sibling(X, Y) :-
-    parent(Z, X),
-    parent(Z, Y),
-    X \= Y.
-grandparent(X, Z) :-
-    parent(X, Y),
-    parent(Y, Z).
-ancestor(X, Y) :- parent(X, Y).
-ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
-descendant(X, Y) :- ancestor(Y, X).
-aunt_or_uncle(X, Y) :-
-    parent(Z, Y),
-    sibling(X, Z),
-    \+ parent(X, Y).
-niece_or_nephew(X, Y) :- aunt_or_uncle(Y, X).
-cousin(X, Y) :-
-    parent(A, X),
-    parent(B, Y),
-    sibling(A, B),
-    X \= Y.
+male(david).
+male(tom).
+male(james).
+
+female(susan).
+female(mary).
+female(linda).
+female(alice).
+
+% Rules to define relationships
+father(X, Y) :- parent(X, Y), male(X).
+mother(X, Y) :- parent(X, Y), female(X).
+sibling(X, Y) :- parent(Z, X), parent(Z, Y), X \= Y.
+grandparent(X, Y) :- parent(X, Z), parent(Z, Y).
+grandchild(X, Y) :- grandparent(Y, X).
+
+% Query examples:
+% ?- father(john, mary). % Check if John is Mary's father
+% ?- sibling(mary, david). % Check if Mary and David are siblings
+% ?- grandparent(john, linda). % Check if John is Linda's grandparent
