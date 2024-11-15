@@ -1,29 +1,20 @@
-% Facts about foods and their properties
-food_properties(apple, [low_carb, high_fiber, no_added_sugar]).
-food_properties(banana, [moderate_carb, high_potassium]).
-food_properties(spinach, [low_carb, low_sodium, high_fiber]).
-food_properties(salmon, [high_protein, omega_3_fatty_acids]).
-% Define more food properties
+% Prolog program for a dieting system based on disease
 
-% Diet recommendations for diseases
-diet_recommendation(diabetes, [low_carb, high_fiber, no_added_sugar]).
-diet_recommendation(hypertension, [low_sodium, high_potassium]).
-% Define more disease diet recommendations
+% Facts defining diseases and recommended diets
+disease(diabetes).
+disease(hypertension).
+disease(obesity).
 
-% Predicates to check if a food fits a diet
-food_fits_diet(Food, Diet) :-
-    food_properties(Food, Properties),
-    diet_recommendation(Diet, DietProperties),
-    forall(member(Property, DietProperties), member(Property, Properties)).
+diet(diabetes, 'Low sugar, high fiber, balanced protein').
+diet(hypertension, 'Low sodium, high potassium, balanced meals').
+diet(obesity, 'Low calorie, nutrient-dense, portion-controlled meals').
 
-% Predicates to suggest a diet based on a disease
-suggest_diet(Disease, RecommendedFoods) :-
-    findall(Food, food_fits_diet(Food, Disease), RecommendedFoods).
+% Rules to suggest a diet based on the disease
+recommended_diet(Disease, Diet) :-
+    disease(Disease),
+    diet(Disease, Diet).
 
-% Example usage
-:- writeln("Welcome to the Diet Recommendation System!"),
-   writeln("Please enter the disease (diabetes or hypertension):"),
-   read(Disease),
-   suggest_diet(Disease, RecommendedFoods),
-   writeln("Recommended foods for the given disease:"),
-   writeln(RecommendedFoods).
+% Example queries:
+% ?- recommended_diet(diabetes, Diet). % Outputs: Diet = 'Low sugar, high fiber, balanced protein'.
+% ?- recommended_diet(hypertension, Diet). % Outputs: Diet = 'Low sodium, high potassium, balanced meals'.
+% ?- recommended_diet(obesity, Diet). % Outputs: Diet = 'Low calorie, nutrient-dense, portion-controlled meals'.
