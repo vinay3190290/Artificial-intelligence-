@@ -1,0 +1,30 @@
+% Prolog program to implement pattern matching
+
+% Facts representing known patterns
+pattern([a, b, c]).
+pattern([1, 2, 3, 4]).
+pattern([x, y, z]).
+pattern([p, q, r, s, t]).
+
+% Rule to match a given pattern with known patterns
+match_pattern(InputPattern) :-
+    pattern(KnownPattern),
+    InputPattern = KnownPattern,
+    write('Pattern matched: '), write(InputPattern), nl.
+
+% Rule for partial matching
+partial_match(InputPattern) :-
+    pattern(KnownPattern),
+    sublist(InputPattern, KnownPattern),
+    write('Partial match found in pattern: '), write(KnownPattern), nl.
+
+% Helper rule to check if a list is a sublist of another
+sublist([], _).
+sublist([X|XS], [X|YS]) :-
+    sublist(XS, YS).
+sublist(XS, [_|YS]) :-
+    sublist(XS, YS).
+
+% Example query:
+% ?- match_pattern([a, b, c]). % Outputs: Pattern matched: [a, b, c]
+% ?- partial_match([1, 2]).    % Outputs: Partial match found in pattern: [1, 2, 3, 4]
