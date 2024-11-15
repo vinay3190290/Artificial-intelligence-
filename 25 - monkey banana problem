@@ -1,39 +1,33 @@
-initial_state(state(at_door, on_floor, at_center, on_ceiling)).
-final_state(state(_, _, _, has_banana)).
-action(walk(State1, State2)) :-
-    can_walk(State1, State2).
-action(climb(State1, State2)) :-
-    can_climb(State1, State2).
-action(grasp(State1, State2)) :-
-    can_grasp(State1, State2).
-can_walk(state(at_door, on_floor, L, H), state(at_center, on_floor, L, H)).
-can_walk(state(at_center, on_floor, L, H), state(at_door, on_floor, L, H)).
-can_walk(state(at_center, on_floor, L, H), state(at_center, on_floor, L, H)).
+% Prolog program for the Monkey and Banana problem
+% The goal is for the monkey to get the banana by moving, climbing, and grabbing.
 
-can_climb(state(M, on_floor, L, H), state(M, on_box, L, H)).
+% Initial state: monkey is at location A, banana is at location B, and the monkey is on the ground.
+initial_state(state(at(monkey, A), on_ground, at(banana, B), has_not)).
 
-can_grasp(state(M, on_box, M, on_ceiling), state(M, on_box, M, has_banana)).
+% Move action: The monkey can move from one location to another.
+move(state(at(monkey, X), on_ground, at(banana, B), has_not),
+     move(X, Y),
+     state(at(monkey, Y), on_ground, at(banana, B), has_not)).
 
-dfs(State, _, []) :-
-    final_state(State).
+% Climb action: The monkey climbs onto a chair to reach the banana.
+move(state(at(monkey, X), on_ground, at(banana, X), has_not),
+     climb,
+     state(at(monkey, X), on_chair, at(banana, X), has_not)).
 
-dfs(State, Visited, [Action | Actions]) :-
-    action(Action),
-    apply_action(State, Action, NewState),
-    \+ member(NewState, Visited),
-    dfs(NewState, [NewState | Visited], Actions).
+% Grab action: The monkey grabs the banana when it is on the chair and at the same location as the banana.
+move(state(at(monkey, X), on_chair, at(banana, X), has_not),
+     grab,
+     state(at(monkey, X), on_chair, at(banana, X), has)).
 
-apply_action(State, walk(State, NewState), NewState).
-apply_action(State, climb(State, NewState), NewState).
-apply_action(State, grasp(State, NewState), NewState).
+% Goal state: The monkey has the banana.
+go(State) :-
+    initial_state(State),
+    path(State, []).
 
-solve(Plan) :-
-    initial_state(InitialState),
-    dfs(InitialState, [InitialState], Plan).
-
-print_solution([]).
-print_solution([Action | Rest]) :-
-    writeln(Action),
-    print_solution(Rest).
-
-:- solve(Plan), print_solution(Plan).
+path(state(_, _, _, has), _) :-
+    write('The monkey has the banana!'), nl.
+path(State, Visited) :-
+    move(State, Action, NewState),
+    \\+ member(NewState, Visited),
+    write(Action), nl,
+    path(NewState, [State | Visited]).
