@@ -1,33 +1,51 @@
-def solve(n):
-    def is_safe(board, row, col):
-        for i in range(row):
-            if board[i] == col or board[i] - i == col - row or board[i] + i == col + row:
-                return False
+N = 8  # Size of the chessboard (8x8)
+
+def print_solution(board):
+    for row in board:
+        line = ""
+        for cell in row:
+            line += "Q " if cell else ". "
+        print(line)
+    print()
+
+def is_safe(board, row, col):
+    # Check the column
+    for i in range(row):
+        if board[i][col]:
+            return False
+
+    # Check the upper left diagonal
+    for i, j in zip(range(row - 1, -1, -1), range(col - 1, -1, -1)):
+        if board[i][j]:
+            return False
+
+    # Check the upper right diagonal
+    for i, j in zip(range(row - 1, -1, -1), range(col + 1, N)):
+        if board[i][j]:
+            return False
+
+    return True
+
+def solve_n_queens(board, row):
+    if row >= N:
+        print_solution(board)
         return True
 
-    def place_queens(n, row, board):
-        if row == n:
-            result.append(board[:])
-            return
-        for col in range(n):
-            if is_safe(board, row, col):
-                board[row] = col
-                place_queens(n, row + 1, board)
+    res = False
+    for col in range(N):
+        if is_safe(board, row, col):
+            board[row][col] = True
+            res = solve_n_queens(board, row + 1) or res
+            board[row][col] = False  # Backtrack
 
-    result = []
-    place_queens(n, 0, [-1]*n)
-    return result
+    return res
 
-def print_board(board):
-    n = len(board)
-    for col in board:
-        row = ['Q' if i == col else '.' for i in range(n)]
-        print(' '.join(row))
+def eight_queens():
+    board = [[False] * N for _ in range(N)]
+    if not solve_n_queens(board, 0):
+        print("No solution exists.")
+    else:
+        print("Solutions printed above.")
 
-n = 8
-solutions = solve(n)
-print(f"Found {len(solutions)} solutions:")
-for i, solution in enumerate(solutions):
-    print(f"Solution {i+1}:")
-    print_board(solution)
-    print()
+# Run the 8-queen problem
+eight_queens()
